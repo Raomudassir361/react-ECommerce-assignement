@@ -1,0 +1,6 @@
+{
+  "name": "SHOP.CO - Fashion & Apparel Store",
+  "description": "A 3-page responsive e-commerce fashion store featuring Homepage, Category & Filter catalog, and Interactive Cart with promo codes and order checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
