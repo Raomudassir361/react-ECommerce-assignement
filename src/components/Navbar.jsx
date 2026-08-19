@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, ShoppingCart, User, Menu, X, ArrowRight, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Search, ShoppingCart, User, Menu, X, ArrowRight } from 'lucide-react';
 
 export default function Navbar({
   currentPage,

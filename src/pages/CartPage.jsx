@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Trash2,
   Minus,
@@ -8,14 +8,12 @@ import {
   ChevronRight,
   ShoppingBag,
   CheckCircle,
-  AlertCircle
 } from 'lucide-react';
 
 export default function CartPage({
   cartItems = [],
   onUpdateQuantity,
   onRemoveItem,
-  onClearCart,
   onNavigate,
   onOpenCheckout,
 }) {

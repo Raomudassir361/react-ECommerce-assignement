@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
-import ProductCard from '../components/ProductCard.jsx';
-import StarRating from '../components/StarRating.jsx';
-import { PRODUCTS, REVIEWS } from '../data/products.js';
-import { ArrowLeft, ArrowRight, CheckCircle2, Sparkle } from 'lucide-react';
+import { useState } from "react";
+import ProductCard from "../components/ProductCard.jsx";
+import StarRating from "../components/StarRating.jsx";
+import { PRODUCTS, REVIEWS } from "../data/products.js";
+import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import hero from "../assets/Rectangle2.png";
+import formal from "../assets/formal.png";
+import party from "../assets/party.png";
+import casual from "../assets/casual.png";
+import gym from "../assets/gym.png";
 
 export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
   const [reviewIndex, setReviewIndex] = useState(0);
 
   // New arrivals: products 10, 4, 5, 6
   const newArrivals = PRODUCTS.filter((p) =>
-    ['prod-10', 'prod-4', 'prod-5', 'prod-6'].includes(p.id)
+    ["prod-10", "prod-4", "prod-5", "prod-6"].includes(p.id),
   );
 
   // Top selling: products 7, 8, 9, 11
   const topSelling = PRODUCTS.filter((p) =>
-    ['prod-7', 'prod-8', 'prod-9', 'prod-11'].includes(p.id)
+    ["prod-7", "prod-8", "prod-9", "prod-11"].includes(p.id),
   );
 
   const nextReview = () => {
@@ -31,18 +36,19 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
       <section className="bg-[#F2F0F1] overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 lg:pt-16 pb-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
             {/* Left Content */}
             <div className="lg:col-span-7 pb-10 lg:pb-16 z-10">
               <h1 className="font-integral text-4xl sm:text-5xl xl:text-[62px] font-black uppercase text-black leading-[1.05] tracking-tight mb-5">
                 FIND CLOTHES THAT MATCHES YOUR STYLE
               </h1>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8 max-w-xl">
-                Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality and cater to your sense of style.
+                Browse through our diverse range of meticulously crafted
+                garments, designed to bring out your individuality and cater to
+                your sense of style.
               </p>
-              
+
               <button
-                onClick={() => onNavigate('category')}
+                onClick={() => onNavigate("category")}
                 className="w-full sm:w-auto bg-black text-white px-14 py-4 rounded-full font-semibold text-base hover:bg-gray-800 transition-all shadow-md cursor-pointer mb-10"
                 id="hero-shop-now-btn"
               >
@@ -85,14 +91,24 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
               {/* Star Vector Icons */}
               {/* Small star on left */}
               <div className="absolute left-2 sm:left-6 top-28 sm:top-36 z-20 text-black animate-pulse">
-                <svg width="44" height="44" viewBox="0 0 56 56" fill="currentColor">
+                <svg
+                  width="44"
+                  height="44"
+                  viewBox="0 0 56 56"
+                  fill="currentColor"
+                >
                   <path d="M28 0C28 15.464 15.464 28 0 28C15.464 28 28 40.536 28 56C28 40.536 40.536 28 56 28C40.536 28 28 15.464 28 0Z" />
                 </svg>
               </div>
 
               {/* Big star on top right */}
               <div className="absolute right-4 sm:right-10 top-6 sm:top-10 z-20 text-black">
-                <svg width="84" height="84" viewBox="0 0 56 56" fill="currentColor">
+                <svg
+                  width="84"
+                  height="84"
+                  viewBox="0 0 56 56"
+                  fill="currentColor"
+                >
                   <path d="M28 0C28 15.464 15.464 28 0 28C15.464 28 28 40.536 28 56C28 40.536 40.536 28 56 28C40.536 28 28 15.464 28 0Z" />
                 </svg>
               </div>
@@ -100,13 +116,12 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
               {/* Model Cutout Image */}
               <div className="relative w-full max-w-md lg:max-w-none pt-6 flex justify-center">
                 <img
-                  src="../../src/assets/Rectangle2.png"
+                  src={hero}
                   alt="Fashion models styled in SHOP.CO apparel"
-                  className="w-full h-auto max-h-[580px] object-cover object-top drop-shadow-xl"
+                  className="w-full h-auto max-h-145 object-cover object-top drop-shadow-xl"
                 />
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -116,35 +131,35 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-between gap-6 sm:gap-10 text-white">
             {/* VERSACE */}
-            <div className="flex-1 min-w-[120px] flex justify-center">
+            <div className="flex-1 min-w-30 flex justify-center">
               <span className="font-sans tracking-[0.25em] text-xl sm:text-3xl font-extrabold uppercase">
                 VERSACE
               </span>
             </div>
 
             {/* ZARA */}
-            <div className="flex-1 min-w-[100px] flex justify-center">
+            <div className="flex-1 min-w-25 flex justify-center">
               <span className="font-sans tracking-tight text-2xl sm:text-4xl font-extrabold uppercase">
                 ZARA
               </span>
             </div>
 
             {/* GUCCI */}
-            <div className="flex-1 min-w-[110px] flex justify-center">
+            <div className="flex-1 min-w-27.5 flex justify-center">
               <span className="font-sans tracking-[0.2em] text-xl sm:text-3xl font-bold uppercase">
                 GUCCI
               </span>
             </div>
 
             {/* PRADA */}
-            <div className="flex-1 min-w-[110px] flex justify-center">
+            <div className="flex-1 min-w-27.5 flex justify-center">
               <span className="font-sans tracking-[0.15em] text-xl sm:text-3xl font-black uppercase">
                 PRADA
               </span>
             </div>
 
             {/* Calvin Klein */}
-            <div className="flex-1 min-w-[140px] flex justify-center">
+            <div className="flex-1 min-w-35 flex justify-center">
               <span className="font-sans font-light tracking-wide text-lg sm:text-2xl">
                 Calvin Klein
               </span>
@@ -173,7 +188,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
           <div className="text-center mt-10">
             <button
-              onClick={() => onNavigate('category', { filter: 'new-arrivals' })}
+              onClick={() => onNavigate("category", { filter: "new-arrivals" })}
               className="border border-gray-200 hover:border-black text-black px-14 py-3.5 rounded-full text-sm font-semibold hover:bg-black hover:text-white transition-all cursor-pointer"
               id="btn-view-all-new-arrivals"
             >
@@ -205,7 +220,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
           <div className="text-center mt-10">
             <button
-              onClick={() => onNavigate('category', { filter: 'top-selling' })}
+              onClick={() => onNavigate("category", { filter: "top-selling" })}
               className="border border-gray-200 hover:border-black text-black px-14 py-3.5 rounded-full text-sm font-semibold hover:bg-black hover:text-white transition-all cursor-pointer"
               id="btn-view-all-top-selling"
             >
@@ -224,10 +239,9 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
-              
               {/* Casual Card (1/3) */}
               <div
-                onClick={() => onNavigate('category', { dressStyle: 'casual' })}
+                onClick={() => onNavigate("category", { dressStyle: "casual" })}
                 className="md:col-span-4 bg-white rounded-2xl overflow-hidden relative h-56 sm:h-72 cursor-pointer group shadow-xs hover:shadow-md transition-all"
                 id="style-card-casual"
               >
@@ -235,7 +249,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
                   Casual
                 </span>
                 <img
-                  src="../../src/assets/casual.png"
+                  src={casual}
                   alt="Casual style"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
@@ -243,7 +257,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
               {/* Formal Card (2/3) */}
               <div
-                onClick={() => onNavigate('category', { dressStyle: 'formal' })}
+                onClick={() => onNavigate("category", { dressStyle: "formal" })}
                 className="md:col-span-8 bg-white rounded-2xl overflow-hidden relative h-56 sm:h-72 cursor-pointer group shadow-xs hover:shadow-md transition-all"
                 id="style-card-formal"
               >
@@ -251,7 +265,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
                   Formal
                 </span>
                 <img
-                  src="../../src/assets/formal.png"
+                  src={formal}
                   alt="Formal style"
                   className="w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-500"
                 />
@@ -259,7 +273,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
               {/* Party Card (2/3) */}
               <div
-                onClick={() => onNavigate('category', { dressStyle: 'party' })}
+                onClick={() => onNavigate("category", { dressStyle: "party" })}
                 className="md:col-span-8 bg-white rounded-2xl overflow-hidden relative h-56 sm:h-72 cursor-pointer group shadow-xs hover:shadow-md transition-all"
                 id="style-card-party"
               >
@@ -267,7 +281,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
                   Party
                 </span>
                 <img
-                  src="../../src/assets/party.png"
+                  src={party}
                   alt="Party style"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
@@ -275,7 +289,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
               {/* Gym Card (1/3) */}
               <div
-                onClick={() => onNavigate('category', { dressStyle: 'gym' })}
+                onClick={() => onNavigate("category", { dressStyle: "gym" })}
                 className="md:col-span-4 bg-white rounded-2xl overflow-hidden relative h-56 sm:h-72 cursor-pointer group shadow-xs hover:shadow-md transition-all"
                 id="style-card-gym"
               >
@@ -283,12 +297,11 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
                   Gym
                 </span>
                 <img
-                  src="../../src/assets/gym.png"
+                  src={gym}
                   alt="Gym style"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-
             </div>
           </div>
         </div>
@@ -338,8 +351,13 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
                     {/* Customer Name & Verified badge */}
                     <div className="flex items-center gap-1.5 mb-2">
-                      <h4 className="text-base font-bold text-black">{item.name}</h4>
-                      <CheckCircle2 size={16} className="text-[#01AB31] fill-[#01AB31] text-white" />
+                      <h4 className="text-base font-bold text-black">
+                        {item.name}
+                      </h4>
+                      <CheckCircle2
+                        size={16}
+                        className="fill-green-600 text-white"
+                      />
                     </div>
 
                     {/* Feedback text */}

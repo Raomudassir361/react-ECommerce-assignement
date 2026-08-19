@@ -1,4 +1,3 @@
-import React from 'react';
 import StarRating from './StarRating.jsx';
 import { ShoppingBag, Eye } from 'lucide-react';
 
@@ -15,8 +14,6 @@ export default function ProductCard({
     discount,
     rating,
     image,
-    size,
-    color,
   } = product;
 
   return (

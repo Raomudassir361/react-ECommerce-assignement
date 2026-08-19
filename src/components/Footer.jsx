@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Mail, Check, Twitter, Facebook, Instagram, Github } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, Check } from 'lucide-react';
 
 export default function Footer({ onNavigate }) {
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ export default function Footer({ onNavigate }) {
             </h2>
           </div>
 
-          <div className="w-full lg:w-auto lg:min-w-[360px] xl:min-w-[400px]">
+          <div className="w-full lg:w-auto lg:min-w-90 xl:min-w-100">
             {isSubscribed ? (
               <div className="bg-white/15 border border-white/30 text-white px-6 py-4 rounded-full flex items-center justify-center gap-2 text-sm font-medium animate-in fade-in duration-300">
                 <Check size={18} className="text-green-400" />
@@ -88,7 +88,7 @@ export default function Footer({ onNavigate }) {
                 className="w-9 h-9 bg-white hover:bg-black text-black hover:text-white border border-gray-200 rounded-full flex items-center justify-center transition-colors"
                 aria-label="Twitter"
               >
-                <Twitter size={15} />
+                <span className="text-xs font-bold">T</span>
               </a>
               <a
                 href="#facebook"
@@ -96,7 +96,7 @@ export default function Footer({ onNavigate }) {
                 className="w-9 h-9 bg-black text-white rounded-full flex items-center justify-center transition-colors"
                 aria-label="Facebook"
               >
-                <Facebook size={15} className="fill-white" />
+                <span className="text-xs font-bold">f</span>
               </a>
               <a
                 href="#instagram"
@@ -104,7 +104,7 @@ export default function Footer({ onNavigate }) {
                 className="w-9 h-9 bg-white hover:bg-black text-black hover:text-white border border-gray-200 rounded-full flex items-center justify-center transition-colors"
                 aria-label="Instagram"
               >
-                <Instagram size={15} />
+                <span className="text-[10px] font-bold">IG</span>
               </a>
               <a
                 href="#github"
@@ -112,7 +112,7 @@ export default function Footer({ onNavigate }) {
                 className="w-9 h-9 bg-white hover:bg-black text-black hover:text-white border border-gray-200 rounded-full flex items-center justify-center transition-colors"
                 aria-label="GitHub"
               >
-                <Github size={15} />
+                <span className="text-[10px] font-bold">GH</span>
               </a>
             </div>
           </div>

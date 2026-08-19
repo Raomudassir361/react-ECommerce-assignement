@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import TopBanner from './components/TopBanner.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
@@ -25,7 +25,7 @@ export default function App() {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         return INITIAL_CART;
       }
     }
@@ -58,7 +58,7 @@ export default function App() {
   };
 
   // Navigation handler
-  const handleNavigate = (page: string, params: any = {}) => {
+  const handleNavigate = (page, params = {}) => {
     if (page === 'category') {
       setCategoryParams({
         dressStyle: params?.dressStyle || 'casual',
@@ -70,10 +70,10 @@ export default function App() {
   };
 
   // Cart actions
-  const handleAddToCart = (product: any) => {
-    setCartItems((prevItems: any[]) => {
+  const handleAddToCart = (product) => {
+    setCartItems((prevItems) => {
       const existingIndex = prevItems.findIndex(
-        (item: any) =>
+        (item) =>
           item.id === product.id &&
           item.size === (product.size || 'Large') &&
           item.color === (product.color || 'White')
@@ -104,13 +104,13 @@ export default function App() {
     showToast(`"${product.name}" added to cart!`);
   };
 
-  const handleUpdateQuantity = (id: string, size: string, color: string, newQuantity: number) => {
+  const handleUpdateQuantity = (id, size, color, newQuantity) => {
     if (newQuantity <= 0) {
       handleRemoveItem(id, size, color);
       return;
     }
-    setCartItems((prev: any[]) =>
-      prev.map((item: any) =>
+    setCartItems((prev) =>
+      prev.map((item) =>
         item.id === id && item.size === size && item.color === color
           ? { ...item, quantity: newQuantity }
           : item
@@ -118,10 +118,10 @@ export default function App() {
     );
   };
 
-  const handleRemoveItem = (id: string, size: string, color: string) => {
-    setCartItems((prev: any[]) =>
+  const handleRemoveItem = (id, size, color) => {
+    setCartItems((prev) =>
       prev.filter(
-        (item: any) => !(item.id === id && item.size === size && item.color === color)
+        (item) => !(item.id === id && item.size === size && item.color === color)
       )
     );
     showToast('Item removed from cart.');
@@ -132,7 +132,7 @@ export default function App() {
   };
 
   // Open product detail modal
-  const handleSelectProduct = (product: any) => {
+  const handleSelectProduct = (product) => {
     setSelectedProduct(product);
     setIsProductModalOpen(true);
   };

@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, CheckCircle, CreditCard, ShieldCheck, ArrowRight, Package } from 'lucide-react';
 
-export default function CheckoutModal({ isOpen, onClose, cartItems, subtotal, discount, total, onClearCart, onNavigate }) {
-  if (!isOpen) return null;
-
+export default function CheckoutModal({ isOpen, onClose, cartItems, total, onClearCart, onNavigate }) {
   const [step, setStep] = useState('form'); // 'form' | 'success'
   const [formData, setFormData] = useState({
     fullName: 'Alex Johnson',
@@ -13,6 +11,9 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, subtotal, di
     zip: '97477',
     cardNumber: '•••• •••• •••• 4242',
   });
+  const [orderNumber] = useState(() => Math.floor(100000 + Math.random() * 900000));
+
+  if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +56,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, subtotal, di
               <div className="max-h-28 overflow-y-auto space-y-1.5 pr-1">
                 {cartItems.map((item, idx) => (
                   <div key={idx} className="flex justify-between text-xs text-gray-700">
-                    <span className="truncate max-w-[240px] font-medium">
+                    <span className="truncate max-w-60 font-medium">
                       {item.quantity}x {item.name} ({item.size})
                     </span>
                     <span className="font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
@@ -158,7 +159,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, subtotal, di
 
             <div className="bg-[#F0F0F0] p-4 rounded-2xl max-w-sm mx-auto text-left mb-6 text-xs text-gray-700 space-y-1.5">
               <div className="flex justify-between font-bold text-black border-b border-gray-200 pb-1 mb-1">
-                <span>Order #SHOP-{Math.floor(100000 + Math.random() * 900000)}</span>
+                <span>Order #SHOP-{orderNumber}</span>
                 <span className="text-green-600">Paid</span>
               </div>
               <div className="flex justify-between">

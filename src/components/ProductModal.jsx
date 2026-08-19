@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { X, Minus, Plus, ShoppingBag, Check, Star } from 'lucide-react';
+import { useState } from 'react';
+import { X, Minus, Plus, ShoppingBag, Check } from 'lucide-react';
 import StarRating from './StarRating.jsx';
 
 export default function ProductModal({ product, isOpen, onClose, onAddToCart }) {
-  if (!isOpen || !product) return null;
-
-  const [selectedSize, setSelectedSize] = useState(product.size || 'Large');
-  const [selectedColor, setSelectedColor] = useState(product.color || 'White');
+  const [selectedSize, setSelectedSize] = useState('Large');
+  const [selectedColor, setSelectedColor] = useState('White');
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+
+  if (!isOpen || !product) return null;
 
   const availableSizes = product.availableSizes || ['Small', 'Medium', 'Large', 'X-Large'];
   const availableColors = product.availableColors || ['White', 'Black', 'Blue'];

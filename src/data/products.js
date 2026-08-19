@@ -1,4 +1,17 @@
 // Product catalog data matching SHOP.CO design exactly
+import cloth1 from '../assets/cloth1.png';
+import cloth2 from '../assets/cloth2.png';
+import cloth3 from '../assets/cloth3.png';
+import cloth4 from '../assets/cloth4.png';
+import cloth5 from '../assets/cloth5.png';
+import cloth6 from '../assets/cloth6.png';
+import cloth7 from '../assets/cloth7.png';
+import cloth8 from '../assets/cloth8.png';
+import cloth9 from '../assets/cloth9.png';
+import cloth10 from '../assets/cloth10.png';
+import cloth11 from '../assets/cloth11.png';
+import cloth12 from '../assets/cloth12.png';
+
 
 export const PRODUCTS = [
   {
@@ -15,7 +28,7 @@ export const PRODUCTS = [
     color: 'White',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['White', 'Black', 'Blue'],
-    image: '../../src/assets/cloth1.png',
+  image: cloth1,
     description: 'This graphic t-shirt is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.',
     isNewArrival: false,
     isTopSelling: false,
@@ -34,7 +47,7 @@ export const PRODUCTS = [
     color: 'Pink',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large', 'XX-Large'],
     availableColors: ['Pink', 'White', 'Black', 'Blue'],
-    image: '../../src/assets/cloth2.png',
+  image: cloth2,
     description: 'Classic polo shirt with contrast tipping on the collar and cuffs. Tailored fit made from premium pique cotton.',
     isNewArrival: false,
     isTopSelling: false,
@@ -53,7 +66,7 @@ export const PRODUCTS = [
     color: 'White',
     availableSizes: ['X-Small', 'Small', 'Medium', 'Large'],
     availableColors: ['White', 'Black'],
-    image: '../../src/assets/cloth3.png',
+  image: cloth3,
     description: 'Raglan sleeve striped tee with premium contrast collar. Soft cotton blend for everyday luxury comfort.',
     isNewArrival: false,
     isTopSelling: false,
@@ -72,7 +85,7 @@ export const PRODUCTS = [
     color: 'Blue',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large', 'XX-Large'],
     availableColors: ['Blue', 'Black'],
-    image: '../../src/assets/cloth4.png',
+  image: cloth4,
     description: 'Stretch skinny jeans tailored with a modern tapered leg and subtle whiskering finish for a contemporary edge.',
     isNewArrival: true,
     isTopSelling: false,
@@ -91,7 +104,7 @@ export const PRODUCTS = [
     color: 'Red',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Red', 'Blue', 'Green'],
-    image: '../../src/assets/cloth5.png',
+  image: cloth5,
     description: 'Timeless plaid flannel shirt in rich woven red and navy tones. Button-down collar and twin chest pockets.',
     isNewArrival: true,
     isTopSelling: false,
@@ -110,7 +123,7 @@ export const PRODUCTS = [
     color: 'Orange',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Orange', 'Black', 'Red'],
-    image: '../../src/assets/cloth6.png',
+  image: cloth6,
     description: 'Bold orange and black panel tee with vertical sports stripes. High-performance breathable streetwear knit.',
     isNewArrival: true,
     isTopSelling: false,
@@ -129,7 +142,7 @@ export const PRODUCTS = [
     color: 'Green',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Green', 'Blue', 'White'],
-    image: '../../src/assets/cloth7.png',
+  image: cloth7,
     description: 'Sage green striped mandarin-collar long-sleeve shirt crafted from organic linen-cotton blend.',
     isNewArrival: false,
     isTopSelling: true,
@@ -148,7 +161,7 @@ export const PRODUCTS = [
     color: 'Orange',
     availableSizes: ['Small', 'Medium', 'Large'],
     availableColors: ['Orange', 'Black'],
-    image: '../../src/assets/cloth8.png',
+  image: cloth8,
     description: 'Burnt orange graphic skate tee with futuristic typography and cybernetic emblem artwork.',
     isNewArrival: false,
     isTopSelling: true,
@@ -167,7 +180,7 @@ export const PRODUCTS = [
     color: 'Blue',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Blue', 'Black'],
-    image: '../../src/assets/cloth9.png',
+  image: cloth9,
     description: 'Vintage wash denim bermuda shorts with raw distressed hems and relaxed slouchy silhouette.',
     isNewArrival: false,
     isTopSelling: true,
@@ -186,7 +199,7 @@ export const PRODUCTS = [
     color: 'Black',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Black', 'White'],
-    image: '../../src/assets/cloth10.png',
+  image: cloth10,
     description: 'Heavyweight black crewneck t-shirt featuring industrial tape detail on the chest and sleeve cuffs.',
     isNewArrival: true,
     isTopSelling: false,
@@ -205,7 +218,7 @@ export const PRODUCTS = [
     color: 'Black',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Black', 'Blue'],
-    image: '../../src/assets/cloth11.png',
+  image: cloth11,
     description: 'Washed charcoal faded skinny jeans with stretch recovery and matte hardware finishes.',
     isNewArrival: false,
     isTopSelling: true,
@@ -224,7 +237,7 @@ export const PRODUCTS = [
     color: 'Black',
     availableSizes: ['Medium', 'Large', 'X-Large'],
     availableColors: ['Black', 'Blue'],
-    image: '../../src/assets/cloth12.png',
+  image: cloth12,
     description: 'Precision-tailored single-breasted blazer in textured navy wool blend for formal events.',
     isNewArrival: false,
     isTopSelling: false,
@@ -243,7 +256,7 @@ export const PRODUCTS = [
     color: 'Blue',
     availableSizes: ['Small', 'Medium', 'Large', 'X-Large'],
     availableColors: ['Blue', 'Black', 'Red'],
-    image: '../../src/assets/cloth13.png',
+  image: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=800&q=80',
     description: 'Moisture-wicking 4-way stretch sleeveless workout top built for high-intensity training.',
     isNewArrival: false,
     isTopSelling: false,
@@ -262,7 +275,7 @@ export const PRODUCTS = [
     color: 'White',
     availableSizes: ['XX-Small', 'Small', 'Medium'],
     availableColors: ['White', 'Pink', 'Black'],
-    image: '../../src/assets/cloth14.png',
+  image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
     description: 'Chic off-shoulder knit party sweater featuring delicate shimmer yarns and scalloped edges.',
     isNewArrival: false,
     isTopSelling: false,

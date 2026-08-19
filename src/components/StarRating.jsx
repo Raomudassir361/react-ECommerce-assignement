@@ -1,14 +1,9 @@
-import React from "react";
-import { Star } from "lucide-react";
+import { Star } from 'lucide-react';
 
-export default function StarRating({
-  rating = 4.5,
-  showScore = true,
-  size = "sm",
-}) {
+export default function StarRating({ rating = 4.5, showScore = true, size = 'sm' }) {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.3;
-  const starSize = size === "sm" ? 16 : 20;
+  const starSize = size === 'sm' ? 16 : 20;
 
   return (
     <div className="flex items-center gap-1.5" id={`rating-${rating}`}>
@@ -50,8 +45,7 @@ export default function StarRating({
       </div>
       {showScore && (
         <span className="text-xs sm:text-sm font-medium text-black ml-0.5">
-          {rating.toFixed(1)}
-          <span className="text-gray-400 font-normal">/5</span>
+          {rating.toFixed(1)}<span className="text-gray-400 font-normal">/5</span>
         </span>
       )}
     </div>
