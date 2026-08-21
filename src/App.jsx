@@ -5,14 +5,14 @@ import Footer from './components/Footer.jsx';
 import HomePage from './pages/HomePage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import CartPage from './pages/CartPage.jsx';
-import ProductModal from './components/ProductModal.jsx';
+import ProductDetails from './pages/ProductDetail.jsx';
 import CheckoutModal from './components/CheckoutModal.jsx';
 import { INITIAL_CART } from './data/products.js';
 import { CheckCircle2 } from 'lucide-react';
 
 export default function App() {
   // Navigation State
-  const [currentPage, setCurrentPage] = useState('home'); // 'home' | 'category' | 'cart'
+  const [currentPage, setCurrentPage] = useState('home'); // 'home' | 'category' | 'cart' | 'product-detail'
   const [categoryParams, setCategoryParams] = useState({
     dressStyle: 'casual',
     filter: null,
@@ -34,7 +34,6 @@ export default function App() {
 
   // Modals & Toast State
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [toastMessage, setToastMessage] = useState(null);
@@ -131,10 +130,10 @@ export default function App() {
     setCartItems([]);
   };
 
-  // Open product detail modal
+  // Open the selected product's detail page
   const handleSelectProduct = (product) => {
     setSelectedProduct(product);
-    setIsProductModalOpen(true);
+    setCurrentPage('product-detail');
   };
 
   // Totals for checkout
@@ -202,21 +201,19 @@ export default function App() {
             onOpenCheckout={() => setIsCheckoutModalOpen(true)}
           />
         )}
+
+        {currentPage === 'product-detail' && selectedProduct && (
+          <ProductDetails
+            product={selectedProduct}
+            onAddToCart={handleAddToCart}
+            onNavigate={handleNavigate}
+            onSelectProduct={handleSelectProduct}
+          />
+        )}
       </div>
 
       {/* Footer */}
       <Footer onNavigate={handleNavigate} />
-
-      {/* Product Detail / Quick Add Modal */}
-      <ProductModal
-        product={selectedProduct}
-        isOpen={isProductModalOpen}
-        onClose={() => {
-          setIsProductModalOpen(false);
-          setSelectedProduct(null);
-        }}
-        onAddToCart={handleAddToCart}
-      />
 
       {/* Checkout Modal */}
       <CheckoutModal
