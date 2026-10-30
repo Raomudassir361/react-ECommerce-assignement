@@ -11,14 +11,23 @@ export default function AccountPage({
   onLogout,
 }) {
   const [mode, setMode] = useState('login');
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setFormError('');
+    if (mode === 'register' && form.password !== form.confirmPassword) {
+      setFormError('Passwords do not match.');
+      return;
+    }
     setSubmitting(true);
     try {
-      await (mode === 'register' ? onRegister(form) : onLogin(form));
+      const credentials = { email: form.email.trim(), password: form.password };
+      await (mode === 'register'
+        ? onRegister({ name: form.name.trim(), ...credentials })
+        : onLogin(credentials));
     } catch {
       // The parent displays the API error beside the form.
     } finally {
@@ -51,7 +60,7 @@ export default function AccountPage({
                     <span>{order.status || 'Processing'}</span>
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    {order.date ? new Date(order.date).toLocaleDateString() : ''}
+                    {(order.date || order.createdAt) ? new Date(order.date || order.createdAt).toLocaleDateString() : ''}
                     {order.total != null ? ` · ${formatPrice(order.total)}` : ''}
                   </p>
                   {(order.items || []).map((item, index) => (
@@ -79,6 +88,7 @@ export default function AccountPage({
             ))}
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError && <p role="alert" className="text-sm text-red-600">{formError}</p>}
             {mode === 'register' && (
               <label className="block text-sm font-medium">
                 Name
@@ -93,6 +103,12 @@ export default function AccountPage({
               Password
               <input required type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} className="mt-1 w-full rounded-xl bg-[#F0F0F0] px-4 py-3 font-normal outline-none focus:ring-2 focus:ring-black/20" />
             </label>
+            {mode === 'register' && (
+              <label className="block text-sm font-medium">
+                Confirm password
+                <input required type="password" autoComplete="new-password" value={form.confirmPassword} onChange={(event) => setForm({ ...form, confirmPassword: event.target.value })} className="mt-1 w-full rounded-xl bg-[#F0F0F0] px-4 py-3 font-normal outline-none focus:ring-2 focus:ring-black/20" />
+              </label>
+            )}
             <button disabled={submitting} className="w-full rounded-full bg-black py-3.5 text-sm font-semibold text-white disabled:opacity-60">
               {submitting ? 'Please wait…' : mode === 'register' ? 'Create account' : 'Sign in'}
             </button>

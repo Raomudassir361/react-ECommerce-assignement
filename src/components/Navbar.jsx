@@ -122,7 +122,7 @@ export default function Navbar({
 
             {/* Cart Icon with Counter */}
             <button
-              onClick={() => onNavigate('account')}
+              onClick={() => onNavigate('cart')}
               className={`relative p-2 rounded-full transition-all cursor-pointer ${
                 currentPage === 'cart'
                   ? 'bg-black text-white'
@@ -141,9 +141,11 @@ export default function Navbar({
 
             {/* User Account Icon */}
             <button
-              onClick={() => onNavigate('cart')}
-              className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-              aria-label="User Account"
+              onClick={() => onNavigate('account')}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${
+                currentPage === 'account' ? 'bg-black text-white' : 'text-black hover:bg-gray-100'
+              }`}
+              aria-label="Customer account"
               id="nav-user-btn"
             >
               <User size={22} />
@@ -193,6 +195,17 @@ export default function Navbar({
               </div>
 
               <div className="py-6 space-y-3">
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onNavigate('account');
+                  }}
+                  className={`block w-full text-left py-2.5 text-base font-medium ${
+                    currentPage === 'account' ? 'text-black font-bold' : 'text-gray-800 hover:text-black'
+                  }`}
+                >
+                  Customer Account
+                </button>
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);

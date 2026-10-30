@@ -281,10 +281,15 @@ export default function App() {
   const handlePlaceOrder = async (customerDetails) => {
     setCheckoutError('');
     const order = {
-      name: customerDetails.fullName,
-      email: customerDetails.email,
-      address: customerDetails.address,
-      items: cartItems.map(({ id, quantity }) => ({ productId: id, quantity })),
+      customerName: customerDetails.fullName,
+      customerEmail: customerDetails.email,
+      customerAddress: customerDetails.address,
+      items: cartItems.map(({ id, quantity, size, color }) => ({
+        productId: id,
+        quantity,
+        ...(size ? { size } : {}),
+        ...(color ? { color } : {}),
+      })),
       paymentMethod: 'Cash on Delivery',
     };
     try {
