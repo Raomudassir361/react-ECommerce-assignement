@@ -1,6 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import ProductCard from '../components/ProductCard.jsx';
-import { PRODUCTS } from '../data/products.js';
 import {
   SlidersHorizontal,
   ChevronRight,
@@ -53,42 +52,68 @@ const DRESS_STYLES = [
 ];
 
 export default function CategoryPage({
-  initialDressStyle = 'casual',
-  initialFilter = null,
+  products = [],
+  query = {},
+  onParamsChange,
+  loading = false,
+  error = '',
   onNavigate,
   onSelectProduct,
   onAddToCart,
 }) {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedDressStyle, setSelectedDressStyle] = useState(initialDressStyle);
-  const [selectedColor, setSelectedColor] = useState('blue');
-  const [selectedSize, setSelectedSize] = useState('Large');
-  const [maxPrice, setMaxPrice] = useState(250);
-  const [minPrice, setMinPrice] = useState(50);
-  const [sortBy, setSortBy] = useState('popular');
-  const [currentPageNum, setCurrentPageNum] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(query.category || null);
+  const [selectedDressStyle, setSelectedDressStyle] = useState(query.style || null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [maxPrice, setMaxPrice] = useState(Number(query.maxPrice) || 50000);
+  const [minPrice] = useState(0);
+  const [sortBy, setSortBy] = useState(query.sort || 'newest');
+  const [currentPageNum, setCurrentPageNum] = useState(Math.max(1, Number(query.page) || 1));
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const search = query.search || '';
+  const pageSize = 6;
+
+  useEffect(() => {
+    onParamsChange?.({
+      search,
+      category: selectedCategory,
+      style: selectedDressStyle,
+      sort: sortBy,
+      maxPrice,
+      page: currentPageNum,
+      filter: query.filter,
+    });
+  }, [search, selectedCategory, selectedDressStyle, sortBy, maxPrice, currentPageNum, query.filter, onParamsChange]);
 
   // Filter products
   const filteredProducts = useMemo(() => {
-    let list = [...PRODUCTS];
+    let list = [...products];
 
-    if (initialFilter === 'new-arrivals') {
-      list = list.filter((p) => p.isNewArrival);
-    } else if (initialFilter === 'top-selling') {
-      list = list.filter((p) => p.isTopSelling);
-    } else if (initialFilter === 'on-sale') {
+    if (query.filter === 'new-arrivals') {
+      const flagged = list.filter((product) => product.isNewArrival);
+      list = flagged.length ? flagged : list.slice(0, 4);
+    } else if (query.filter === 'top-selling') {
+      const flagged = list.filter((product) => product.isTopSelling);
+      list = flagged.length ? flagged : list.slice(4, 8);
+    } else if (query.filter === 'on-sale') {
       list = list.filter((p) => p.discount != null);
     }
 
+    if (search) {
+      const term = search.trim().toLowerCase();
+      list = list.filter((product) => `${product.name} ${product.category} ${product.description}`.toLowerCase().includes(term));
+    }
+
     if (selectedCategory) {
-      list = list.filter((p) => p.category === selectedCategory);
+      list = list.filter((p) => String(p.category).toLowerCase() === selectedCategory.toLowerCase());
     }
 
     if (selectedDressStyle) {
-      list = list.filter((p) => p.dressStyle === selectedDressStyle);
+      list = list.filter((p) => (p.styles || []).some((style) => String(style).toLowerCase() === selectedDressStyle.toLowerCase()));
     }
 
+    if (selectedColor) list = list.filter((product) => !product.colors?.length || product.colors.some((color) => String(color).toLowerCase() === selectedColor.toLowerCase()));
+    if (selectedSize) list = list.filter((product) => !product.sizes?.length || product.sizes.some((size) => String(size).toLowerCase() === selectedSize.toLowerCase()));
     list = list.filter((p) => p.price >= minPrice && p.price <= maxPrice);
 
     // Sorting
@@ -96,27 +121,32 @@ export default function CategoryPage({
       list.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-high') {
       list.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'rating') {
-      list.sort((a, b) => b.rating - a.rating);
+    } else if (sortBy === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === 'newest' && list.some((product) => product.createdAt || product.updatedAt)) {
+      list.sort((a, b) => new Date(b.createdAt ?? b.updatedAt ?? 0) - new Date(a.createdAt ?? a.updatedAt ?? 0));
     }
 
     return list;
-  }, [initialFilter, selectedCategory, selectedDressStyle, minPrice, maxPrice, sortBy]);
+  }, [products, query.filter, search, selectedCategory, selectedDressStyle, selectedColor, selectedSize, minPrice, maxPrice, sortBy]);
+
+  const pageCount = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+  const pageProducts = filteredProducts.slice((currentPageNum - 1) * pageSize, currentPageNum * pageSize);
 
   const resetFilters = () => {
     setSelectedCategory(null);
-    setSelectedDressStyle('casual');
-    setSelectedColor('blue');
-    setSelectedSize('Large');
-    setMinPrice(50);
-    setMaxPrice(250);
+    setSelectedDressStyle(null);
+    setSelectedColor(null);
+    setSelectedSize(null);
+    setMaxPrice(50000);
+    setCurrentPageNum(1);
   };
 
   const currentCategoryTitle =
     selectedDressStyle ? selectedDressStyle.charAt(0).toUpperCase() + selectedDressStyle.slice(1) :
-    initialFilter === 'new-arrivals' ? 'New Arrivals' :
-    initialFilter === 'top-selling' ? 'Top Selling' :
-    initialFilter === 'on-sale' ? 'On Sale Items' : 'All Clothes';
+    query.filter === 'new-arrivals' ? 'New Arrivals' :
+    query.filter === 'top-selling' ? 'Top Selling' :
+    query.filter === 'on-sale' ? 'On Sale Items' : 'All Clothes';
 
   const filterSidebarContent = (
     <div className="space-y-5 text-black">
@@ -141,7 +171,7 @@ export default function CategoryPage({
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+            onClick={() => { setSelectedCategory(selectedCategory === cat.id ? null : cat.id); setCurrentPageNum(1); }}
             className={`w-full flex items-center justify-between text-sm py-1 transition-colors cursor-pointer ${
               selectedCategory === cat.id
                 ? 'font-bold text-black'
@@ -158,20 +188,20 @@ export default function CategoryPage({
       <div className="pb-5 border-b border-gray-100">
         <div className="flex items-center justify-between mb-3">
           <h4 className="font-bold text-base text-black">Price</h4>
-          <span className="text-xs font-semibold text-black">${minPrice} - ${maxPrice}</span>
+          <span className="text-xs font-semibold text-black">Rs {minPrice.toLocaleString('en-PK')} - Rs {maxPrice.toLocaleString('en-PK')}</span>
         </div>
         <input
           type="range"
-          min="50"
-          max="350"
-          step="5"
+          min="0"
+          max="50000"
+          step="500"
           value={maxPrice}
-          onChange={(e) => setMaxPrice(Number(e.target.value))}
+          onChange={(e) => { setMaxPrice(Number(e.target.value)); setCurrentPageNum(1); }}
           className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
         <div className="flex justify-between text-xs font-bold text-black mt-2">
-          <span>$50</span>
-          <span>$200</span>
+          <span>Rs 0</span>
+          <span>Rs 50,000</span>
         </div>
       </div>
 
@@ -184,7 +214,7 @@ export default function CategoryPage({
           {COLORS.map((clr) => (
             <button
               key={clr.id}
-              onClick={() => setSelectedColor(selectedColor === clr.id ? null : clr.id)}
+              onClick={() => { setSelectedColor(selectedColor === clr.id ? null : clr.id); setCurrentPageNum(1); }}
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform cursor-pointer ${clr.bg} ${
                 selectedColor === clr.id ? 'ring-2 ring-black ring-offset-2 scale-105' : 'hover:scale-105'
               }`}
@@ -210,7 +240,7 @@ export default function CategoryPage({
           {SIZES.map((sz) => (
             <button
               key={sz}
-              onClick={() => setSelectedSize(selectedSize === sz ? null : sz)}
+              onClick={() => { setSelectedSize(selectedSize === sz ? null : sz); setCurrentPageNum(1); }}
               className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
                 selectedSize === sz
                   ? 'bg-black text-white'
@@ -232,7 +262,7 @@ export default function CategoryPage({
           {DRESS_STYLES.map((style) => (
             <button
               key={style.id}
-              onClick={() => setSelectedDressStyle(selectedDressStyle === style.id ? null : style.id)}
+              onClick={() => { setSelectedDressStyle(selectedDressStyle === style.id ? null : style.id); setCurrentPageNum(1); }}
               className={`w-full flex items-center justify-between text-sm py-1 transition-colors cursor-pointer ${
                 selectedDressStyle === style.id
                   ? 'font-bold text-black'
@@ -259,6 +289,7 @@ export default function CategoryPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      {error && products.length > 0 && <p role="alert" className="mb-4 text-sm text-red-600">{error}</p>}
       
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 mb-6">
@@ -303,19 +334,19 @@ export default function CategoryPage({
             </div>
 
             <div className="flex items-center justify-between sm:justify-end gap-3 text-xs sm:text-sm text-gray-500">
-              <span>Showing 1-9 of 100 Products</span>
+              <span>Showing {filteredProducts.length ? (currentPageNum - 1) * pageSize + 1 : 0}-{Math.min(currentPageNum * pageSize, filteredProducts.length)} of {filteredProducts.length} Products</span>
               <div className="flex items-center gap-1.5">
                 <span className="hidden sm:inline">Sort by:</span>
                 <div className="relative inline-block">
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => { setSortBy(e.target.value); setCurrentPageNum(1); }}
                     className="bg-transparent font-bold text-black appearance-none pr-6 pl-1 py-1 cursor-pointer focus:outline-none"
                   >
-                    <option value="popular">Most Popular</option>
+                    <option value="newest">Newest</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Highest Rated</option>
+                    <option value="name">Name</option>
                   </select>
                   <ChevronDown
                     size={14}
@@ -327,7 +358,11 @@ export default function CategoryPage({
           </div>
 
           {/* Product Grid */}
-          {filteredProducts.length === 0 ? (
+          {loading ? (
+            <p className="text-center py-16 text-gray-500">Loading products…</p>
+          ) : error && products.length === 0 ? (
+            <p className="text-center py-16 text-red-600" role="alert">{error}</p>
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-16 bg-[#F0F0F0] rounded-2xl p-8">
               <p className="text-lg font-bold text-black mb-2">No products match your selected filters.</p>
               <p className="text-sm text-gray-500 mb-6">Try clearing some filters or changing price ranges.</p>
@@ -340,7 +375,7 @@ export default function CategoryPage({
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
-              {filteredProducts.map((product) => (
+              {pageProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -366,7 +401,7 @@ export default function CategoryPage({
             </button>
 
             <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              {[1, 2, 3].map((page) => (
+              {Array.from({ length: Math.min(pageCount, 5) }, (_, index) => index + 1).map((page) => (
                 <button
                   key={page}
                   onClick={() => setCurrentPageNum(page)}
@@ -379,24 +414,12 @@ export default function CategoryPage({
                   {page}
                 </button>
               ))}
-              <span className="text-gray-400 px-1">...</span>
-              {[8, 9, 10].map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPageNum(page)}
-                  className={`hidden sm:flex w-9 h-9 rounded-lg font-bold items-center justify-center transition-colors cursor-pointer ${
-                    currentPageNum === page
-                      ? 'bg-black/10 text-black'
-                      : 'text-gray-500 hover:text-black hover:bg-gray-50'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+              {pageCount > 5 && <span className="text-gray-400 px-1">…</span>}
             </div>
 
             <button
-              onClick={() => setCurrentPageNum(Math.min(10, currentPageNum + 1))}
+              onClick={() => setCurrentPageNum(Math.min(pageCount, currentPageNum + 1))}
+              disabled={currentPageNum >= pageCount}
               className="border border-gray-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold text-black hover:bg-gray-50 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <span>Next</span>

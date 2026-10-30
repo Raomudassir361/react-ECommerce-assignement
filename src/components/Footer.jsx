@@ -1,18 +1,26 @@
 import { useState } from 'react';
 import { Mail, Check } from 'lucide-react';
+import { subscribeToNewsletter } from '../api/storeApi.js';
 
 export default function Footer({ onNavigate }) {
   const [email, setEmail] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState('');
+  const [subscriptionError, setSubscriptionError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
-    if (email && email.includes('@')) {
-      setIsSubscribed(true);
-      setTimeout(() => {
-        setEmail('');
-        setIsSubscribed(false);
-      }, 4000);
+    setSubscriptionError('');
+    setSubscriptionMessage('');
+    setSubmitting(true);
+    try {
+      const result = await subscribeToNewsletter(email.trim());
+      setSubscriptionMessage(result?.message || 'Thank you for subscribing.');
+      setEmail('');
+    } catch (error) {
+      setSubscriptionError(error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -29,13 +37,14 @@ export default function Footer({ onNavigate }) {
           </div>
 
           <div className="w-full lg:w-auto lg:min-w-90 xl:min-w-100">
-            {isSubscribed ? (
+            {subscriptionMessage ? (
               <div className="bg-white/15 border border-white/30 text-white px-6 py-4 rounded-full flex items-center justify-center gap-2 text-sm font-medium animate-in fade-in duration-300">
                 <Check size={18} className="text-green-400" />
-                <span>Thank you! You have been subscribed for 20% off.</span>
+                <span>{subscriptionMessage}</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
+                {subscriptionError && <p role="alert" className="text-sm text-red-300">{subscriptionError}</p>}
                 <div className="relative">
                   <Mail
                     size={20}
@@ -53,10 +62,11 @@ export default function Footer({ onNavigate }) {
                 </div>
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="w-full bg-white text-black font-semibold text-sm py-3.5 px-6 rounded-full hover:bg-gray-100 transition-colors shadow-sm cursor-pointer"
                   id="newsletter-subscribe-btn"
                 >
-                  Subscribe to Newsletter
+                  {submitting ? 'Subscribing…' : 'Subscribe to Newsletter'}
                 </button>
               </form>
             )}
@@ -124,13 +134,13 @@ export default function Footer({ onNavigate }) {
             </h4>
             <ul className="space-y-3 text-sm text-gray-500">
               <li>
-                <button onClick={() => onNavigate && onNavigate('home')} className="hover:text-black transition-colors">About</button>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'about' })} className="hover:text-black transition-colors">About</button>
               </li>
               <li>
-                <button onClick={() => onNavigate && onNavigate('category')} className="hover:text-black transition-colors">Features</button>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'delivery' })} className="hover:text-black transition-colors">Delivery</button>
               </li>
               <li>
-                <button onClick={() => onNavigate && onNavigate('category')} className="hover:text-black transition-colors">Works</button>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'orders' })} className="hover:text-black transition-colors">Orders</button>
               </li>
               <li>
                 <a href="#careers" onClick={(e) => e.preventDefault()} className="hover:text-black transition-colors">Career</a>
@@ -145,16 +155,16 @@ export default function Footer({ onNavigate }) {
             </h4>
             <ul className="space-y-3 text-sm text-gray-500">
               <li>
-                <a href="#support" onClick={(e) => e.preventDefault()} className="hover:text-black transition-colors">Customer Support</a>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'account' })} className="hover:text-black transition-colors">Customer Support</button>
               </li>
               <li>
-                <a href="#delivery" onClick={(e) => e.preventDefault()} className="hover:text-black transition-colors">Delivery Details</a>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'delivery' })} className="hover:text-black transition-colors">Delivery Details</button>
               </li>
               <li>
-                <a href="#terms" onClick={(e) => e.preventDefault()} className="hover:text-black transition-colors">Terms & Conditions</a>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'privacy' })} className="hover:text-black transition-colors">Terms & Conditions</button>
               </li>
               <li>
-                <a href="#privacy" onClick={(e) => e.preventDefault()} className="hover:text-black transition-colors">Privacy Policy</a>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'privacy' })} className="hover:text-black transition-colors">Privacy Policy</button>
               </li>
             </ul>
           </div>
@@ -166,16 +176,16 @@ export default function Footer({ onNavigate }) {
             </h4>
             <ul className="space-y-3 text-sm text-gray-500">
               <li>
-                <button onClick={() => onNavigate && onNavigate('cart')} className="hover:text-black transition-colors">Account</button>
+                <button onClick={() => onNavigate && onNavigate('account')} className="hover:text-black transition-colors">Account</button>
               </li>
               <li>
-                <button onClick={() => onNavigate && onNavigate('cart')} className="hover:text-black transition-colors">Manage Deliveries</button>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'delivery' })} className="hover:text-black transition-colors">Manage Deliveries</button>
               </li>
               <li>
-                <button onClick={() => onNavigate && onNavigate('cart')} className="hover:text-black transition-colors">Orders</button>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'orders' })} className="hover:text-black transition-colors">Orders</button>
               </li>
               <li>
-                <button onClick={() => onNavigate && onNavigate('cart')} className="hover:text-black transition-colors">Payments</button>
+                <button onClick={() => onNavigate && onNavigate('info', { slug: 'payments' })} className="hover:text-black transition-colors">Payments</button>
               </li>
             </ul>
           </div>

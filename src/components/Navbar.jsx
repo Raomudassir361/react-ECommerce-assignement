@@ -122,7 +122,7 @@ export default function Navbar({
 
             {/* Cart Icon with Counter */}
             <button
-              onClick={() => onNavigate('cart')}
+              onClick={() => onNavigate('account')}
               className={`relative p-2 rounded-full transition-all cursor-pointer ${
                 currentPage === 'cart'
                   ? 'bg-black text-white'

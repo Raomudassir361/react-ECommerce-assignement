@@ -1,14 +1,12 @@
-import { useState } from 'react';
 import {
   Trash2,
   Minus,
   Plus,
-  Tag,
   ArrowRight,
   ChevronRight,
   ShoppingBag,
-  CheckCircle,
 } from 'lucide-react';
+import { formatPrice } from '../api/storeApi.js';
 
 export default function CartPage({
   cartItems = [],
@@ -17,44 +15,13 @@ export default function CartPage({
   onNavigate,
   onOpenCheckout,
 }) {
-  const [promoCode, setPromoCode] = useState('');
-  const [discountPercent, setDiscountPercent] = useState(20); // Default 20% discount as shown in design
-  const [promoApplied, setPromoApplied] = useState(true);
-  const [promoMessage, setPromoMessage] = useState('20% discount applied!');
-
-  // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * (item.quantity || 1),
     0
   );
-
-  const discountAmount = subtotal > 0 ? (subtotal * discountPercent) / 100 : 0;
-  const deliveryFee = subtotal > 0 ? 15 : 0;
-  const total = subtotal > 0 ? subtotal - discountAmount + deliveryFee : 0;
-
-  const handleApplyPromo = (e) => {
-    e.preventDefault();
-    const code = promoCode.trim().toUpperCase();
-    if (!code) return;
-
-    if (code === 'SHOP20' || code === 'SAVE20' || code === 'DISCOUNT20') {
-      setDiscountPercent(20);
-      setPromoApplied(true);
-      setPromoMessage('Promo code applied: 20% OFF!');
-    } else if (code === 'SHOP30' || code === 'SAVE30') {
-      setDiscountPercent(30);
-      setPromoApplied(true);
-      setPromoMessage('Special promo code applied: 30% OFF!');
-    } else if (code === 'SAVE10') {
-      setDiscountPercent(10);
-      setPromoApplied(true);
-      setPromoMessage('Promo code applied: 10% OFF!');
-    } else {
-      setDiscountPercent(20); // Keep default 20%
-      setPromoApplied(true);
-      setPromoMessage(`Code '${code}' activated! 20% OFF!`);
-    }
-  };
+  const tax = subtotal * 0.05;
+  const deliveryFee = subtotal > 0 && subtotal < 5000 ? 250 : 0;
+  const total = subtotal + tax + deliveryFee;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -152,7 +119,7 @@ export default function CartPage({
                   {/* Bottom Row: Price & Stepper */}
                   <div className="flex items-center justify-between mt-3">
                     <span className="font-extrabold text-lg sm:text-xl text-black">
-                      ${item.price}
+                      {formatPrice(item.price)}
                     </span>
 
                     {/* Quantity Stepper: [- 1 +] */}
@@ -207,19 +174,18 @@ export default function CartPage({
               {/* Subtotal */}
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">Subtotal</span>
-                <span className="font-bold text-black">${subtotal.toFixed(0)}</span>
+                <span className="font-bold text-black">{formatPrice(subtotal)}</span>
               </div>
 
-              {/* Discount (-20%) in Red */}
               <div className="flex items-center justify-between">
-                <span className="text-gray-500">Discount (-{discountPercent}%)</span>
-                <span className="font-bold text-[#FF3333]">-${discountAmount.toFixed(0)}</span>
+                <span className="text-gray-500">Tax (5%)</span>
+                <span className="font-bold text-black">{formatPrice(tax)}</span>
               </div>
 
               {/* Delivery Fee */}
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">Delivery Fee</span>
-                <span className="font-bold text-black">${deliveryFee}</span>
+                <span className="font-bold text-black">{formatPrice(deliveryFee)}</span>
               </div>
 
               {/* Divider */}
@@ -227,43 +193,11 @@ export default function CartPage({
                 <div className="flex items-center justify-between text-lg sm:text-xl">
                   <span className="font-normal text-black">Total</span>
                   <span className="font-extrabold text-black text-xl sm:text-2xl">
-                    ${total.toFixed(0)}
+                    {formatPrice(total)}
                   </span>
                 </div>
               </div>
             </div>
-
-            {/* Promo Code Input Box */}
-            <form onSubmit={handleApplyPromo} className="flex gap-2.5 mt-6">
-              <div className="relative flex-1">
-                <Tag
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Add promo code"
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                  className="w-full bg-[#F0F0F0] text-sm text-black placeholder-gray-400 pl-11 pr-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-black/20"
-                  id="promo-code-input"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-black text-white font-semibold text-sm px-6 py-3 rounded-full hover:bg-gray-800 transition-colors shrink-0 cursor-pointer"
-                id="btn-apply-promo"
-              >
-                Apply
-              </button>
-            </form>
-
-            {promoApplied && promoMessage && (
-              <p className="text-xs font-semibold text-green-600 mt-2 flex items-center gap-1">
-                <CheckCircle size={13} />
-                <span>{promoMessage}</span>
-              </p>
-            )}
 
             {/* Go to Checkout Button */}
             <button

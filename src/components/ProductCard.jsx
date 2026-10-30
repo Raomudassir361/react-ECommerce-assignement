@@ -1,5 +1,6 @@
 import StarRating from './StarRating.jsx';
 import { ShoppingBag, Eye } from 'lucide-react';
+import { formatPrice } from '../api/storeApi.js';
 
 export default function ProductCard({
   product,
@@ -10,10 +11,12 @@ export default function ProductCard({
     id,
     name,
     price,
-    originalPrice,
+    oldPrice,
+    originalPrice = oldPrice,
     discount,
     rating,
     image,
+    stock = 0,
   } = product;
 
   return (
@@ -33,7 +36,7 @@ export default function ProductCard({
 
         {/* Hover Quick Action Buttons */}
         <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 p-4">
-          <button
+          {stock > 0 && <button
             onClick={(e) => {
               e.stopPropagation();
               onAddToCart && onAddToCart(product);
@@ -43,7 +46,7 @@ export default function ProductCard({
             id={`quick-add-${id}`}
           >
             <ShoppingBag size={18} />
-          </button>
+          </button>}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -62,6 +65,11 @@ export default function ProductCard({
             -{discount}%
           </span>
         )}
+        {stock < 1 && (
+          <span className="absolute bottom-3 left-3 bg-white/95 text-black text-xs font-bold px-3 py-1 rounded-full">
+            Out of Stock
+          </span>
+        )}
       </div>
 
       {/* Product Details */}
@@ -72,15 +80,16 @@ export default function ProductCard({
 
         {/* Rating */}
         <StarRating rating={rating} />
+        {stock < 1 && <span className="text-xs font-semibold text-gray-500">Out of Stock</span>}
 
         {/* Price & Discounts */}
         <div className="flex items-center gap-2 mt-1">
           <span className="text-lg sm:text-xl font-extrabold text-black">
-            ${price}
+            {formatPrice(price)}
           </span>
           {originalPrice && (
             <span className="text-base sm:text-lg font-bold text-gray-400 line-through">
-              ${originalPrice}
+              {formatPrice(originalPrice)}
             </span>
           )}
           {discount && (

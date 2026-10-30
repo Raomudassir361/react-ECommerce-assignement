@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ProductCard from "../components/ProductCard.jsx";
 import StarRating from "../components/StarRating.jsx";
-import { PRODUCTS, REVIEWS } from "../data/products.js";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import hero from "../assets/Rectangle2.png";
 import formal from "../assets/formal.png";
@@ -9,29 +8,27 @@ import party from "../assets/party.png";
 import casual from "../assets/casual.png";
 import gym from "../assets/gym.png";
 
-export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
+export default function HomePage({ products = [], reviews = [], reviewsError = '', loading = false, error = '', onNavigate, onSelectProduct, onAddToCart }) {
   const [reviewIndex, setReviewIndex] = useState(0);
 
-  // New arrivals: products 10, 4, 5, 6
-  const newArrivals = PRODUCTS.filter((p) =>
-    ["prod-10", "prod-4", "prod-5", "prod-6"].includes(p.id),
-  );
-
-  // Top selling: products 7, 8, 9, 11
-  const topSelling = PRODUCTS.filter((p) =>
-    ["prod-7", "prod-8", "prod-9", "prod-11"].includes(p.id),
-  );
+  const flaggedNewArrivals = products.filter((product) => product.isNewArrival);
+  const flaggedTopSelling = products.filter((product) => product.isTopSelling);
+  const newArrivals = (flaggedNewArrivals.length ? flaggedNewArrivals : products).slice(0, 4);
+  const topSelling = (flaggedTopSelling.length ? flaggedTopSelling : products.slice(4)).slice(0, 4);
+  const showError = error && !products.length;
+  const visibleReviews = reviews.slice(0, 3);
 
   const nextReview = () => {
-    setReviewIndex((prev) => (prev + 1) % REVIEWS.length);
+    setReviewIndex((prev) => (prev + 1) % Math.max(visibleReviews.length, 1));
   };
 
   const prevReview = () => {
-    setReviewIndex((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
+    setReviewIndex((prev) => (prev - 1 + Math.max(visibleReviews.length, 1)) % Math.max(visibleReviews.length, 1));
   };
 
   return (
     <div className="w-full">
+      {error && products.length > 0 && <p role="alert" className="px-4 py-3 text-center text-sm text-red-600">{error}</p>}
       {/* 1. HERO SECTION */}
       <section className="bg-[#F2F0F1] overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 lg:pt-16 pb-0">
@@ -176,7 +173,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {newArrivals.map((product) => (
+            {loading ? <p className="col-span-full text-center text-gray-500">Loading products…</p> : showError ? <p className="col-span-full text-center text-red-600" role="alert">{error}</p> : newArrivals.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -208,7 +205,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {topSelling.map((product) => (
+            {loading ? <p className="col-span-full text-center text-gray-500">Loading products…</p> : showError ? <p className="col-span-full text-center text-red-600" role="alert">{error}</p> : topSelling.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -336,11 +333,17 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
           {/* Reviews Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[0, 1, 2].map((offset) => {
-              const item = REVIEWS[(reviewIndex + offset) % REVIEWS.length];
+            {reviewsError ? (
+              <p className="col-span-full text-center text-red-600" role="alert">{reviewsError}</p>
+            ) : visibleReviews.length === 0 ? (
+              <p className="col-span-full text-center text-gray-500">Customer reviews will appear here.</p>
+            ) : [0, 1, 2].slice(0, visibleReviews.length).map((offset) => {
+              const item = visibleReviews[(reviewIndex + offset) % visibleReviews.length];
+              const name = item.customerName ?? item.name ?? 'Customer';
+              const text = item.comment ?? item.text ?? '';
               return (
                 <div
-                  key={item.id}
+                  key={item._id ?? item.id ?? `${name}-${offset}`}
                   className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-7 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow"
                 >
                   <div>
@@ -352,7 +355,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
                     {/* Customer Name & Verified badge */}
                     <div className="flex items-center gap-1.5 mb-2">
                       <h4 className="text-base font-bold text-black">
-                        {item.name}
+                        {name}
                       </h4>
                       <CheckCircle2
                         size={16}
@@ -362,7 +365,7 @@ export default function HomePage({ onNavigate, onSelectProduct, onAddToCart }) {
 
                     {/* Feedback text */}
                     <p className="text-gray-500 text-sm leading-relaxed">
-                      "{item.text}"
+                      "{text}"
                     </p>
                   </div>
                 </div>

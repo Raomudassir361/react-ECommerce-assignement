@@ -1,16 +1,26 @@
-# React + Vite
+# SHOP.CO Storefront
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Customer-facing React and Vite storefront. Product, account, order, review, and newsletter data is served by the backend API; the cart is stored in the browser.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Run the API at `http://localhost:5000`, then start the storefront:
 
-## React Compiler
+```sh
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Vite proxies `/api` to the local backend. The browser uses same-origin `/api` by default, so `VITE_API_BASE_URL` can remain unset.
 
-## Expanding the ESLint configuration
+## Build and deploy
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```sh
+npm run build
+```
+
+Deploy this repository to Vercel. `vercel.json` sends `/api/*` to `https://ecommerce-backend-roan-tau.vercel.app/api/*` before applying the SPA fallback for deep links. Add `https://react-e-commerce-assignement.vercel.app` to the backend's `FRONTEND_ORIGINS` so browser requests and the login cookie are accepted.
+
+If configuring a direct API URL instead, set `VITE_API_BASE_URL` to `https://ecommerce-backend-roan-tau.vercel.app/api` and rebuild. The backend must allow cross-site cookies with `COOKIE_SAMESITE=none`.
+
+Delivery coverage, contact details, and legal text on the information pages must be confirmed by the store owner before launch.

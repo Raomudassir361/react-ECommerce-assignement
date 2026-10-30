@@ -1,0 +1,17 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://ecommerce-backend-roan-tau.vercel.app/api/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "https://ecommerce-dashboard-zeta-ecru.vercel.app/admin"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://ecommerce-dashboard-zeta-ecru.vercel.app/admin/:path*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

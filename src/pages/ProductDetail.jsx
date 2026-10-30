@@ -1,47 +1,56 @@
 import { useEffect, useState } from "react";
 import Reviews from "../components/Reviews.jsx";
 import ProductRecommendations from "../components/ProductRecommendations.jsx";
-import cloth1 from "../assets/cloth1.png";
+import { getProductReviews, postProductReview, formatPrice } from "../api/storeApi.js";
 
 const ProductDetails = ({
   product,
+  products = [],
+  customer,
   onAddToCart,
   onNavigate,
   onSelectProduct,
+  onLoginRequired,
+  onReviewsChanged,
 }) => {
-  const selectedProduct = product || {
-    id: 1,
-    name: "One Life Graphic T-shirt",
-    price: 260,
-    originalPrice: 300,
-    discount: 40,
-    rating: 4.5,
-    image: cloth1,
-  };
-
-  const [selectedColor, setSelectedColor] = useState("brown");
-  const [selectedSize, setSelectedSize] = useState("Large");
+  const selectedProduct = product;
+  const [selectedColor, setSelectedColor] = useState(selectedProduct.colors?.[0] || "");
+  const [selectedSize, setSelectedSize] = useState(selectedProduct.sizes?.[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(selectedProduct.image);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState("");
 
   useEffect(() => {
-    setMainImage(selectedProduct.image);
-    setSelectedColor(selectedProduct.color || "brown");
-    setSelectedSize(selectedProduct.size || "Large");
-    setQuantity(1);
+    getProductReviews(selectedProduct.id)
+      .then((items) => {
+        setReviews(items);
+        setReviewsError("");
+      })
+      .catch((error) => setReviewsError(error.message))
+      .finally(() => setReviewsLoading(false));
   }, [selectedProduct]);
 
-  const increaseQuantity = () => setQuantity((prev) => prev + 1);
+  const increaseQuantity = () => setQuantity((prev) => Math.min(selectedProduct.stock, prev + 1));
   const decreaseQuantity = () =>
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = () => {
+    if (selectedProduct.stock < 1) return;
     onAddToCart({
       ...selectedProduct,
       color: selectedColor,
       size: selectedSize,
       quantity,
     });
+  };
+
+  const handleSubmitReview = async (review) => {
+    await postProductReview(selectedProduct.id, review);
+    const updatedReviews = await getProductReviews(selectedProduct.id);
+    setReviews(updatedReviews);
+    onReviewsChanged?.();
   };
 
   return (
@@ -124,12 +133,12 @@ const ProductDetails = ({
 
           <div className="flex items-center gap-[10px]">
             <span className="text-[27px] font-bold text-[#111] max-[639px]:text-[20px]">
-              ${selectedProduct.price}
+              {formatPrice(selectedProduct.price)}
             </span>
-            {selectedProduct.originalPrice && (
+            {selectedProduct.oldPrice && (
               <>
                 <span className="text-[15px] text-[#999] line-through max-[639px]:text-[14px]">
-                  ${selectedProduct.originalPrice}
+                  {formatPrice(selectedProduct.oldPrice)}
                 </span>
                 <span className="rounded-full bg-[#ffe5e5] px-[10px] py-[4px] text-[11px] font-medium text-[#f33] max-[639px]:px-[8px] max-[639px]:py-[3px] max-[639px]:text-[10px]">
                   -{selectedProduct.discount}%
@@ -139,49 +148,28 @@ const ProductDetails = ({
           </div>
 
           <p className="mt-[15px] max-w-[570px] text-[14px] leading-[1.65] text-[#666] max-[639px]:text-[11px]">
-            This graphic t-shirt which is perfect for any occasion. Crafted from
-            a soft and breathable fabric, it offers exceptional comfort and
-            style.
+            {selectedProduct.description}
           </p>
 
           <div className="my-[22px] h-[1px] w-full bg-[#e5e5e5]" />
 
-          <div className="mb-0">
+          {selectedProduct.colors?.length > 0 && <div className="mb-0">
             <p className="mb-[12px] text-[14px] text-[#777]">Select Colors</p>
             <div className="flex items-center gap-[12px]">
-              <button
-                type="button"
-                aria-label="Brown"
-                className={`flex h-[37px] w-[37px] items-center justify-center rounded-full border-none text-transparent ${selectedColor === "brown" ? "text-white" : ""} bg-[#4b3a30]`}
-                onClick={() => setSelectedColor("brown")}
-              >
-                {selectedColor === "brown" && "✓"}
-              </button>
-              <button
-                type="button"
-                aria-label="Green"
-                className={`flex h-[37px] w-[37px] items-center justify-center rounded-full border-none text-transparent ${selectedColor === "green" ? "text-white" : ""} bg-[#31523b]`}
-                onClick={() => setSelectedColor("green")}
-              >
-                {selectedColor === "green" && "✓"}
-              </button>
-              <button
-                type="button"
-                aria-label="Navy"
-                className={`flex h-[37px] w-[37px] items-center justify-center rounded-full border-none text-transparent ${selectedColor === "navy" ? "text-white" : ""} bg-[#273c56]`}
-                onClick={() => setSelectedColor("navy")}
-              >
-                {selectedColor === "navy" && "✓"}
-              </button>
+              {selectedProduct.colors.map((color) => (
+                <button key={color} type="button" aria-label={color} title={color} className={`flex h-[37px] w-[37px] items-center justify-center rounded-full border border-gray-200 text-transparent ${selectedColor === color ? "text-white ring-2 ring-black ring-offset-2" : ""}`} style={{ backgroundColor: color }} onClick={() => setSelectedColor(color)}>
+                  {selectedColor === color && "✓"}
+                </button>
+              ))}
             </div>
-          </div>
+          </div>}
 
-          <div className="my-[22px] h-[1px] w-full bg-[#e5e5e5]" />
+          {selectedProduct.colors?.length > 0 && <div className="my-[22px] h-[1px] w-full bg-[#e5e5e5]" />}
 
-          <div className="mb-0">
+          {selectedProduct.sizes?.length > 0 && <div className="mb-0">
             <p className="mb-[12px] text-[14px] text-[#777]">Choose Size</p>
             <div className="flex flex-wrap items-center gap-[10px]">
-              {["Small", "Medium", "Large", "X-Large"].map((size) => (
+              {selectedProduct.sizes.map((size) => (
                 <button
                   key={size}
                   type="button"
@@ -192,9 +180,9 @@ const ProductDetails = ({
                 </button>
               ))}
             </div>
-          </div>
+          </div>}
 
-          <div className="my-[22px] h-[1px] w-full bg-[#e5e5e5]" />
+          {(selectedProduct.colors?.length > 0 || selectedProduct.sizes?.length > 0) && <div className="my-[22px] h-[1px] w-full bg-[#e5e5e5]" />}
 
           <div className="flex items-center gap-[12px] max-[639px]:gap-[8px]">
             <div className="flex items-center gap-[14px] rounded-full bg-[#f3f3f3] px-[14px] py-[6px]">
@@ -210,6 +198,7 @@ const ProductDetails = ({
                 type="button"
                 className="border-none bg-transparent text-[16px] text-black"
                 onClick={increaseQuantity}
+                disabled={quantity >= selectedProduct.stock}
               >
                 +
               </button>
@@ -218,16 +207,19 @@ const ProductDetails = ({
             <button
               type="button"
               onClick={handleAddToCart}
-              className="h-[46px] rounded-full bg-black px-[30px] text-[15px] font-medium text-white max-[639px]:h-[40px] max-[639px]:flex-1 max-[639px]:text-[12px]"
+              disabled={selectedProduct.stock < 1}
+              className="h-[46px] rounded-full bg-black px-[30px] text-[15px] font-medium text-white max-[639px]:h-[40px] max-[639px]:flex-1 max-[639px]:text-[12px] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Add to Cart
+              {selectedProduct.stock > 0 ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
         </div>
       </section>
 
-      <Reviews />
+      <Reviews product={selectedProduct} reviews={reviews} loading={reviewsLoading} error={reviewsError} customer={customer} onLoginRequired={onLoginRequired} onSubmitReview={handleSubmitReview} />
       <ProductRecommendations
+        products={products}
+        currentProductId={selectedProduct.id}
         onSelectProduct={onSelectProduct}
         onAddToCart={onAddToCart}
       />
